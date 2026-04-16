@@ -1,5 +1,5 @@
-package feli.avanceiig9.Clases;
-import feli.avanceiig9.Enumeradores.Estado;
+package Grupo9.avanceiig9.Clases;
+import Grupo9.avanceiig9.Enumeradores.Estado;
 import javax.swing.JOptionPane;
 
 /**
@@ -28,7 +28,49 @@ public class Operacion {
         this.estado = estado;
     }
       
-    
+ public static Operacion[] gestionVentas = new Operacion[30];
+    public static int contador = 0;
+    public static void gestionVentas(){
+    gestionVentas[contador++] = new Operacion("15/4/2025", 2, 1, Estado.VENTA);
+    gestionVentas[contador++] = new Operacion("15/4/2025", 1, 3, Estado.VENTA);
+    gestionVentas[contador++] = new Operacion("15/4/2025", 3, 5, Estado.VENTA);
+    gestionVentas[contador++] = new Operacion("15/4/2025", 5, 4, Estado.VENTA);
+    gestionVentas[contador++] = new Operacion("15/4/2025", 1, 4, Estado.VENTA);
+}  
+
+    //    Getter & Setter
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+
+    public int getCantidadAfectada() {
+        return cantidadAfectada;
+    }
+
+    public void setCantidadAfectada(int cantidadAfectada) {
+        this.cantidadAfectada = cantidadAfectada;
+    }
+
+    public int getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(int idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
 //    Metodos
     public void menuOperaciones() {
         int opcion = 0;
@@ -62,66 +104,63 @@ public class Operacion {
     }
 
     public void registrarVenta() {
-        JOptionPane.showInputDialog("Ingrese la fecha de la venta:");
-        JOptionPane.showInputDialog("Ingrese el ID del producto:");
-        JOptionPane.showInputDialog("Ingrese la cantidad vendida:");
+        setIdProducto(Integer.parseInt(JOptionPane.showInputDialog("Ingrese el ID del producto:")));
         
-        JOptionPane.showMessageDialog(null, 
-                "=== Venta Registrada ===\n"
-                + "Producto ID: " + getIdProducto() + "\n"
-                + "Cantidad: " + getCantidadAfectada() + "\n"
-                + "Estado: " + getEstado());
+        if(Stock.gestionStock[getIdProducto()-1].getCantidadActual()<=0){
+        JOptionPane.showMessageDialog(null, "No hay Stock disponible, por favor reponer stock");
+        }
+        setFecha(JOptionPane.showInputDialog("Ingrese la fecha de la venta:"));
+        setCantidadAfectada(Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad vendida:")));
+        if(getCantidadAfectada()> Stock.gestionStock[getIdProducto()-1].getCantidadActual()){
+            JOptionPane.showMessageDialog(null, "No se puede realizar la venta, STOCK INSUFICIENTE");
+            
+        }else{
+
+            setEstado(estado.VENTA);
+
+            Operacion op =  new Operacion(getFecha(),getCantidadAfectada(),getIdProducto(),getEstado());
+            gestionVentas[contador++] = op;
+            Stock.gestionStock[getIdProducto()-1].setCantidadActual(Stock.gestionStock[getIdProducto()-1].getCantidadActual()-getCantidadAfectada());
+            JOptionPane.showMessageDialog(null, "Venta Registrada: \n\n" + toString());
+        }
     }
+        
 
     public void registrarDevolucion() {
-        JOptionPane.showInputDialog("Ingrese el motivo de la devolución:");
-        JOptionPane.showInputDialog("Ingrese la cantidad a devolver:");
-        JOptionPane.showMessageDialog(null, 
-                "=== Devolución Registrada ===\n"
-                + "Fecha: " + getFecha() + "\n"
-                + "Cantidad devuelta: " + getCantidadAfectada());
+        setFecha(JOptionPane.showInputDialog("Ingrese la fecha de la devolución:"));
+        String motivo = JOptionPane.showInputDialog("Ingrese el motivo de la devolución:");
+        setIdProducto(Integer.parseInt(JOptionPane.showInputDialog("Ingrese el ID del producto:")));
+        setCantidadAfectada(Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad a devolver:")));
+
+        setEstado(estado.DEVOLUCION);
+        
+        Operacion op =  new Operacion(getFecha(),getCantidadAfectada(),getIdProducto(),getEstado());
+        gestionVentas[contador++] = op;
+        Stock.gestionStock[getIdProducto()-1].setCantidadActual(Stock.gestionStock[getIdProducto()-1].getCantidadActual()+getCantidadAfectada());
+
+        JOptionPane.showMessageDialog(null, "Devolucion Registrada: \n\n" + toString());
+        
     }
 
     public void verHistorialMovimientos() {
-            JOptionPane.showMessageDialog(null,
-                "=== HISTORIAL DE MOVIMIENTOS ===\n"
-                + "Última operación: " + getFecha() + "\n"
-                + "Cantidad afectada: " + getCantidadAfectada() + "\n"
-                + "ID Producto: " + getIdProducto());
+        String historial = "=== HISTORIAL DE OPERACIONES ===\n\n";
+
+        for (int i = 0; i < contador; i++) {
+            historial += "Operación #" + (i + 1) + "\n";
+            historial += gestionVentas[i].toString();
+            historial += "------------------------\n";
     }
 
-//    Getter & Setter
-
-    public String getFecha() {
-        return fecha;
+    JOptionPane.showMessageDialog(null, historial);
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public int getCantidadAfectada() {
-        return cantidadAfectada;
-    }
-
-    public void setCantidadAfectada(int cantidadAfectada) {
-        this.cantidadAfectada = cantidadAfectada;
-    }
-
-    public int getIdProducto() {
-        return idProducto;
-    }
-
-    public void setIdProducto(int idProducto) {
-        this.idProducto = idProducto;
-    }
-
-    public Estado getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Estado estado) {
-        this.estado = estado;
+    @Override
+    public String toString() {
+        return "Fecha = " + getFecha() + "\n" + 
+                "CantidadAfectada = " + getCantidadAfectada() + "\n" + 
+                "Id Producto = " + getIdProducto() + "\n" +
+                "Producto = " + Videojuego.gestionVideojuegos[getIdProducto()-1].getTitulo() +"\n" +
+                "Estado = " + getEstado() + "\n";
     }
 
 }

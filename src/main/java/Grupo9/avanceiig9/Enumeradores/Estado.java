@@ -1,5 +1,4 @@
-package feli.avanceiig9.Enumeradores;
-
+package Grupo9.avanceiig9.Enumeradores;
 /**
  *
  * @author felinava06

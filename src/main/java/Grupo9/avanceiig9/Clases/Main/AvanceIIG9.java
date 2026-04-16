@@ -1,9 +1,8 @@
-package feli.avanceiig9;
-import static feli.avanceiig9.Clases.Videojuego.menuVideojuegos;
-import feli.avanceiig9.Clases.Monitoreo;
-import feli.avanceiig9.Clases.Operacion;
-import feli.avanceiig9.Clases.Stock;
-import feli.avanceiig9.Clases.Videojuego;
+package Grupo9.avanceiig9.Clases.Main;
+import Grupo9.avanceiig9.Clases.Monitoreo;
+import Grupo9.avanceiig9.Clases.Videojuego;
+import Grupo9.avanceiig9.Clases.Operacion;
+import Grupo9.avanceiig9.Clases.Stock;
 import javax.swing.JOptionPane;
 
 /**
@@ -18,6 +17,11 @@ public class AvanceIIG9 {
         Monitoreo monitoreo = new Monitoreo();
         Stock stock = new Stock();
         Operacion operacion = new Operacion();
+        
+        Videojuego.gestionVideojuegos();
+        Operacion.gestionVentas();
+        Stock.gestionStock();
+        
         
         
         int opcion = 0;

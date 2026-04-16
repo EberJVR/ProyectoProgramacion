@@ -1,5 +1,6 @@
-package feli.avanceiig9.Clases;
+package Grupo9.avanceiig9.Clases;
 
+import Grupo9.avanceiig9.Enumeradores.Estado;
 import javax.swing.JOptionPane;
 
 /**
@@ -9,13 +10,12 @@ import javax.swing.JOptionPane;
 public class Monitoreo {
     
 //    Atributos
-    private String idReporte;
+    private int idReporte;
     private String fechaMonitoreo;
     private int juegosVendidos;
     private int juegosDevueltos;
     private double ingresosTotales;
     private double perdidasPorDevolucion;
-    private int alertaStockCritico;
     
     
 //    Constructores
@@ -23,27 +23,26 @@ public class Monitoreo {
         
     }
     
-    public Monitoreo(String idReporte, String fechaMonitoreo,
+    public Monitoreo(int idReporte, String fechaMonitoreo,
             int juegosVendidos, int juegosDevueltos,
             double ingresosTotales,
-            double perdidasPorDevolucion,
-            int alertaStockCritico) {
+            double perdidasPorDevolucion
+            ) {
         this.idReporte = idReporte;
         this.fechaMonitoreo = fechaMonitoreo;
         this.juegosVendidos = juegosVendidos;
         this.juegosDevueltos = juegosDevueltos;
         this.ingresosTotales = ingresosTotales;
         this.perdidasPorDevolucion = perdidasPorDevolucion;
-        this.alertaStockCritico = alertaStockCritico;
     }
     
     //    Getter & Setter
 
-    public String getIdReporte() {
+    public int getIdReporte() {
         return idReporte;
     }
 
-    public void setIdReporte(String idReporte) {
+    public void setIdReporte(int idReporte) {
         this.idReporte = idReporte;
     }
 
@@ -85,17 +84,9 @@ public class Monitoreo {
 
     public void setPerdidasPorDevolucion(double perdidasPorDevolucion) {
         this.perdidasPorDevolucion = perdidasPorDevolucion;
-    }
-
-    public int getAlertaStockCritico() {
-        return alertaStockCritico;
-    }
-
-    public void setAlertaStockCritico(int alertaStockCritico) {
-        this.alertaStockCritico = alertaStockCritico;
-    }
-    
+    } 
 //    Metodos
+    
     
 public void mostrarMenuMonitoreo(){
     int opcion;
@@ -130,31 +121,83 @@ public void mostrarMenuMonitoreo(){
     } while (opcion != 4);
 }
 public void reporteVentas() {
-    JOptionPane.showMessageDialog(null,
-            "=== REPORTE DE VENTAS ===\n"
-            + "ID Reporte: " + getIdReporte() + "\n"
-            + "Fecha: " + getFechaMonitoreo() + "\n"
-            + "Juegos Vendidos: " + getJuegosVendidos() + "\n"
-            + "Ingresos Totales: ₡" + getIngresosTotales()
-    );
+    if(Operacion.gestionVentas.length == 0){
+            JOptionPane.showMessageDialog(null, "No hay datos registrador");
+            return;
+        }
+        
+    String info = "Lista de Videojuegos: \n";
+    for (int i = 0; i < Operacion.contador; i++) {
+        if (Operacion.gestionVentas[i].getEstado() == Estado.VENTA){
+        info+= Operacion.gestionVentas[i].toString();
+        info+= "\n";
+        info+= "--- --- --- ---";
+        info+= "\n";}
+        }
+    JOptionPane.showMessageDialog(null, info);
 }
 public void reporteDevoluciones() {
-    JOptionPane.showMessageDialog(null,
-            "=== REPORTE DE DEVOLUCIONES ===\n"
-            + "Juegos Devueltos: " + getJuegosDevueltos() + "\n"
-            + "Pérdidas por Devolución: ₡" + getPerdidasPorDevolucion()
-    );
+    if(Operacion.gestionVentas.length == 0){
+            JOptionPane.showMessageDialog(null, "No hay datos registrador");
+            return;
+        }
+        
+    String info = "Lista de Videojuegos: \n";
+    for (int i = 0; i < Operacion.contador; i++) {
+        if (Operacion.gestionVentas[i].getEstado() == Estado.DEVOLUCION){
+        info+= Operacion.gestionVentas[i].toString();
+        info+= "\n";
+        info+= "--- --- --- ---";
+        info+= "\n";}
+        }
+    JOptionPane.showMessageDialog(null, info);
 }
 
 public void resumenFinanciero() {
-    double gananciaNeta = getIngresosTotales() - getPerdidasPorDevolucion();
+    double ingresos = 0;
+    double perdidas = 0;
+    int vendidos = 0;
+    int devueltos = 0;
 
-    JOptionPane.showMessageDialog(null,
-            "=== RESUMEN FINANCIERO ===\n"
-            + "Ingresos Totales: ₡" + getIngresosTotales() + "\n"
-            + "Pérdidas: ₡" + getPerdidasPorDevolucion() + "\n"
-            + "Ganancia Neta: ₡" + gananciaNeta + "\n"
-            + "Alertas de Stock Crítico: " + getAlertaStockCritico()
-    );
+    for (int i = 0; i < Operacion.contador; i++) {
+
+        if (Operacion.gestionVentas[i] != null) {
+
+            int id = Operacion.gestionVentas[i].getIdProducto() - 1;
+            double precio = Videojuego.gestionVideojuegos[id].getPrecio();
+            int cantidad = Operacion.gestionVentas[i].getCantidadAfectada();
+
+            if (Operacion.gestionVentas[i].getEstado() == Estado.VENTA) {
+                ingresos += precio * cantidad;
+                vendidos += cantidad;
+            } 
+            else if (Operacion.gestionVentas[i].getEstado() == Estado.DEVOLUCION) {
+                perdidas += precio * cantidad;
+                devueltos += cantidad;
+            }
+        }
+    }
+
+    double gananciaNeta = ingresos - perdidas;
+
+    String info = "=== RESUMEN FINANCIERO ===\n\n";
+    info += "Juegos Vendidos: " + vendidos + "\n";
+    info += "Juegos Devueltos: " + devueltos + "\n";
+    info += "Ingresos Totales: ₡" + ingresos + "\n";
+    info += "Pérdidas por Devolución: ₡" + perdidas + "\n";
+    info += "Ganancia Neta: ₡" + gananciaNeta;
+
+    JOptionPane.showMessageDialog(null, info);
+    
 }
+
+    @Override
+    public String toString() {
+        return "Id Reporte=" + getIdReporte() + "\n"+
+                "Fecha Monitoreo=" + getFechaMonitoreo() + "\n"+ 
+                "Juegos Vendidos=" + getJuegosVendidos() + "\n"+ 
+                "Juegos Devueltos=" + getJuegosDevueltos() + "\n"+ 
+                "Ingresos Totales=" + getIngresosTotales() + "\n"+ 
+                "Perdidas Por Devolucion=" + getPerdidasPorDevolucion() + "\n";
+    }
 }

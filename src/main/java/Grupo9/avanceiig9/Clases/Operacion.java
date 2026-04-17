@@ -138,7 +138,7 @@ public class Operacion {
         gestionVentas[contador++] = op;
         Stock.gestionStock[getIdProducto()-1].setCantidadActual(Stock.gestionStock[getIdProducto()-1].getCantidadActual()+getCantidadAfectada());
 
-        JOptionPane.showMessageDialog(null, "Devolucion Registrada: \n\n" + toString());
+        JOptionPane.showMessageDialog(null, "Devolucion Registrada: \n\n" + toString()+ "Motivo de Devolucion: \n"+motivo);
         
     }
 

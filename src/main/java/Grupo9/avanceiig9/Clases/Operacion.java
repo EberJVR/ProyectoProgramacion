@@ -102,28 +102,43 @@ public class Operacion {
             }
         } while (opcion != 4);
     }
-
+    
     public void registrarVenta() {
-        setIdProducto(Integer.parseInt(JOptionPane.showInputDialog("Ingrese el ID del producto:")));
-        
-        if(Stock.gestionStock[getIdProducto()-1].getCantidadActual()<=0){
-        JOptionPane.showMessageDialog(null, "No hay Stock disponible, por favor reponer stock");
-        }
-        setFecha(JOptionPane.showInputDialog("Ingrese la fecha de la venta:"));
-        setCantidadAfectada(Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad vendida:")));
-        if(getCantidadAfectada()> Stock.gestionStock[getIdProducto()-1].getCantidadActual()){
-            JOptionPane.showMessageDialog(null, "No se puede realizar la venta, STOCK INSUFICIENTE");
-            
-        }else{
 
-            setEstado(estado.VENTA);
+    setIdProducto(Integer.parseInt(JOptionPane.showInputDialog("Ingrese el ID:")));
 
-            Operacion op =  new Operacion(getFecha(),getCantidadAfectada(),getIdProducto(),getEstado());
-            gestionVentas[contador++] = op;
-            Stock.gestionStock[getIdProducto()-1].setCantidadActual(Stock.gestionStock[getIdProducto()-1].getCantidadActual()-getCantidadAfectada());
-            JOptionPane.showMessageDialog(null, "Venta Registrada: \n\n" + toString());
-        }
+    Videojuego juego = Videojuego.buscarVideojuegoPorId(getIdProducto());
+
+    if (juego == null) {
+        JOptionPane.showMessageDialog(null, "Este producto ya no lo manejamos.");
+        return;
     }
+
+    Stock stock = Stock.buscarStockPorId(getIdProducto());
+
+    if (stock == null || stock.getCantidadActual() <= 0) {
+        JOptionPane.showMessageDialog(null, "No hay stock disponible.");
+        return;
+    }
+
+    setFecha(JOptionPane.showInputDialog("Fecha:"));
+    setCantidadAfectada(Integer.parseInt(JOptionPane.showInputDialog("Cantidad:")));
+
+    if (getCantidadAfectada() > stock.getCantidadActual()) {
+        JOptionPane.showMessageDialog(null, "Stock insuficiente.");
+        return;
+    }
+
+    setEstado(estado.VENTA);
+
+    Operacion op = new Operacion(getFecha(), getCantidadAfectada(), getIdProducto(), getEstado());
+    gestionVentas[contador++] = op;
+
+    stock.setCantidadActual(stock.getCantidadActual() - getCantidadAfectada());
+
+    JOptionPane.showMessageDialog(null, "Venta registrada:\n\n" + op.toString());
+}
+
         
 
     public void registrarDevolucion() {

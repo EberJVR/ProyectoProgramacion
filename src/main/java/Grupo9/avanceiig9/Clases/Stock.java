@@ -91,6 +91,16 @@ public class Stock {
             }
         } while (opcion != 4);
     }
+    
+    public static Stock buscarStockPorId(int id) {
+    for (int i = 0; i < Stock.contadorStock; i++) {
+        if (Stock.gestionStock[i] != null &&
+            Stock.gestionStock[i].getIdProducto() == id) {
+            return Stock.gestionStock[i];
+        }
+    }
+    return null;
+}
 
     public void actualizarExistencias() {
     int idBuscar = Integer.parseInt(JOptionPane.showInputDialog("ID del videojuego:"));
@@ -111,18 +121,30 @@ public class Stock {
             encontrado = true;
             break;
         }}
-    
-        if (!encontrado) {
-            
+        Videojuego juego = null;
+
+        for (int i = 0; i < Videojuego.contador; i++) {
+            if (Videojuego.gestionVideojuegos[i] != null &&
+                Videojuego.gestionVideojuegos[i].getIdVideojuego() == idBuscar) {
+
+                juego = Videojuego.gestionVideojuegos[i];
+                break;
+            }
+        }
+        if (!encontrado && juego != null && juego.getTitulo() != null && !juego.getTitulo().trim().isEmpty()) {
+
         int cantidad = Integer.parseInt(
-            JOptionPane.showInputDialog("Juego no encontrado pero creado.... \n Agregandolo al Stock... \n Cantidad inicial:")
+            JOptionPane.showInputDialog("Agregando al stock...\nCantidad inicial:")
         );
 
         Stock nuevo = new Stock(idBuscar, cantidad, 2);
         gestionStock[contadorStock++] = nuevo;
 
         JOptionPane.showMessageDialog(null, "Stock creado.");
+        }else if (juego == null || juego.getTitulo() == null || juego.getTitulo().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(null, "El videojuego no existe o no tiene datos válidos.");
     }
+    
     }
 
     

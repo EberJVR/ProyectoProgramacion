@@ -102,6 +102,16 @@ public class Videojuego {
             }
         } while (subOpcion != 5);
     }
+    
+    public static Videojuego buscarVideojuegoPorId(int id) {
+    for (int i = 0; i < Videojuego.contador; i++) {
+        if (Videojuego.gestionVideojuegos[i] != null &&
+            Videojuego.gestionVideojuegos[i].getIdVideojuego() == id) {
+            return Videojuego.gestionVideojuegos[i];
+        }
+    }
+    return null;
+}
 
     public void agregarVideojuego() {
         if (contador < gestionVideojuegos.length) {
@@ -161,7 +171,9 @@ public class Videojuego {
     public void eliminarJuego() {
         int idEliminar = Integer.parseInt(JOptionPane.showInputDialog("ID a eliminar:"));
         int indice = -1;
-
+        
+//        Validacion para Eliminar el Juego
+                
         for (int i = 0; i < contador; i++) {
             if (gestionVideojuegos[i].getIdVideojuego() == idEliminar) {
                 indice = i;
@@ -171,17 +183,38 @@ public class Videojuego {
 
         if (indice != -1) {
             for (int i = indice; i < contador - 1; i++) {
-                gestionVideojuegos[i] = gestionVideojuegos[i + 1];
-                Stock.gestionStock[i] = Stock.gestionStock[i + 1];
+                gestionVideojuegos[i] = gestionVideojuegos[i + 1]; 
             }
             gestionVideojuegos[contador - 1] = null;
-            Stock.gestionStock[Stock.contadorStock - 1] = null;
             contador--;
-            Stock.contadorStock--;
             for(int j = 0; j < contador;j++){
             gestionVideojuegos[j].setIdVideojuego(j+1);
-            Stock.gestionStock[j].setIdProducto(j+1);
             }
+            
+//            Validacion para eliminar el stock con el mismo codigo si esta creado
+
+            for (int i = 0; i < Stock.contadorStock; i++) {
+
+            if (Stock.gestionStock[i] != null) {
+
+                int idActual = Stock.gestionStock[i].getIdProducto();
+
+                if (idActual == idEliminar) {
+                    // eliminar este stock
+                    for (int j = i; j < Stock.contadorStock - 1; j++) {
+                        Stock.gestionStock[j] = Stock.gestionStock[j + 1];
+                    }
+                    Stock.gestionStock[Stock.contadorStock - 1] = null;
+                    Stock.contadorStock--;
+                    i--; 
+                } 
+                else if (idActual > idEliminar) {
+                    // ajustar ID
+                    Stock.gestionStock[i].setIdProducto(idActual - 1);
+                }
+            }
+
+        }
             JOptionPane.showMessageDialog(null, "Eliminado.");
         } else {
             JOptionPane.showMessageDialog(null, "No encontrado.");

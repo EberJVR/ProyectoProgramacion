@@ -111,7 +111,7 @@ public class Stock {
             encontrado = true;
             break;
         }}
-        // 🔥 si no existe, lo creamos UNA VEZ
+    
         if (!encontrado) {
             
         int cantidad = Integer.parseInt(
